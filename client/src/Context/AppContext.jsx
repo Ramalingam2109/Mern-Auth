@@ -108,6 +108,9 @@ export const AppContextProvider = ({ children }) => {
         // Reset error count on success
         setState(prev => ({ ...prev, consecutiveErrors: 0 }))
         return { success: true, user: data.user }
+      } else {
+        toast.error(data.message || 'Registration failed')
+        return { success: false, error: data.message }
       }
     } catch (error) {
       handleAuthError(error)
@@ -133,6 +136,9 @@ export const AppContextProvider = ({ children }) => {
         // Reset error count on success
         setState(prev => ({ ...prev, consecutiveErrors: 0 }))
         return { success: true, user: data.user }
+      } else {
+        toast.error(data.message || 'Login failed')
+        return { success: false, error: data.message }
       }
     } catch (error) {
       handleAuthError(error)
