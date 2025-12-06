@@ -20,6 +20,7 @@ export const AppContextProvider = ({ children }) => {
     userData: null,
     isLoading: false,
     isVerified: false,
+    consecutiveErrors: 0,
   })
 
   // Combined state updater
@@ -56,12 +57,22 @@ export const AppContextProvider = ({ children }) => {
       isVerified: false,
     })
 
-    // Check for specific DB connection errors
+    // Check for specific DB connection errors - Only alert after 5 consecutive failures
     if (error.response?.status === 500 || error.message.includes('Network Error')) {
-      toast.error('Service Unavailable: Contact Administrator to reactivate database cluster')
+      // Increment error count in state
+      setState(prev => {
+        const newCount = (prev.consecutiveErrors || 0) + 1;
+        if (newCount >= 5) {
+          toast.error('Service Unavailable: Contact Administrator to reactivate database cluster');
+          return { ...prev, consecutiveErrors: 0 }; // Optional: Reset after alert or keep alerting
+        }
+        return { ...prev, consecutiveErrors: newCount };
+      });
     } else {
       const errorMsg = error.response?.data?.message || error.message || 'Authentication error'
       toast.error(errorMsg)
+      // Reset error count on other errors (or keep separate?) - Resetting on non-db error implies connection might be fine but request bad
+      setState(prev => ({ ...prev, consecutiveErrors: 0 }));
     }
   }
 
@@ -94,6 +105,8 @@ export const AppContextProvider = ({ children }) => {
           isVerified: data.user?.isAccountVerified || false,
         })
         toast.success('Registration successful!')
+        // Reset error count on success
+        setState(prev => ({ ...prev, consecutiveErrors: 0 }))
         return { success: true, user: data.user }
       }
     } catch (error) {
@@ -117,6 +130,8 @@ export const AppContextProvider = ({ children }) => {
           isVerified: data.user?.isAccountVerified || false,
         })
         toast.success('Login successful!')
+        // Reset error count on success
+        setState(prev => ({ ...prev, consecutiveErrors: 0 }))
         return { success: true, user: data.user }
       }
     } catch (error) {
