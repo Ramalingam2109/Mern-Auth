@@ -202,28 +202,30 @@ export const sendResetOTP = async (req, res) => {
   }
   try {
     const user = await userModel.findOne({ email })
-    if (!email) {
-      res.json({ success: false, message: 'User not found' })
-    } else {
-      const otp = String(Math.floor(100000 + Math.random() * 900000))
-      user.resetOTP = otp
-      user.resetOTPExpireAT = Date.now() + 15 * 60 * 1000
-      await user.save()
-
-      const mailOptions = {
-        from: process.env.SENDER_MAIL,
-        to: user.email, // Use user.email from the found user
-        subject: 'Reset OTP',
-        text: `Your OTP for resetting password is ${otp}. Use this to reset your password.`,
-      }
-
-      await transporter.sendMail(mailOptions)
-
-      res.json({ success: true, message: 'Verification OTP sent to your email' })
+    if (!user) {
+      return res.json({ success: false, message: 'User not found' })
     }
-  } catch (error) {
-    res.json({ success: false, message: error.message })
+
+    // Generate OTP
+    const otp = String(Math.floor(100000 + Math.random() * 900000))
+    user.resetOTP = otp
+    user.resetOTPExpireAT = Date.now() + 15 * 60 * 1000
+    await user.save()
+
+    const mailOptions = {
+      from: process.env.SENDER_MAIL,
+      to: user.email, // Use user.email from the found user
+      subject: 'Reset OTP',
+      text: `Your OTP for resetting password is ${otp}. Use this to reset your password.`,
+    }
+
+    await transporter.sendMail(mailOptions)
+
+    res.json({ success: true, message: 'Verification OTP sent to your email' })
   }
+  } catch (error) {
+  res.json({ success: false, message: error.message })
+}
 }
 
 export const ResetPassword = async (req, res) => {
