@@ -1,17 +1,27 @@
 import userModel from '../models/userModel.js';
+
 export const getUserData = async (req, res) => {
   try {
+    // Get userId from auth middleware (not from req.body)
+    const { userId } = req;
 
-    const { userId } = req.body 
-    
-    const user = await userModel.findById(userId)
+    const user = await userModel.findById(userId);
 
     if (!user) {
-      return res.json({ success: false , message : "user doesn't exist "})
+      return res.json({ success: false, message: "User doesn't exist" });
     }
-res.json({success : true ,userData : {name : user.name , isVerified : user.isVerified}  })
+
+    // Return user data matching what frontend expects
+    res.json({
+      success: true,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        isAccountVerified: user.isAccountVerified
+      }
+    });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
   }
-  catch (error) {
-    res.json({success : false  , message : error.message})
-  }
-}
+};

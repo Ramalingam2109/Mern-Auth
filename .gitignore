@@ -1,6 +1,12 @@
 # Dependencies
 node_modules/
 
+# Package manager files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+.pnpm-store/
+
 # Environment variables
 .env
 .env.local

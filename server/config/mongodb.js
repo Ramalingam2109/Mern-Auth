@@ -8,9 +8,7 @@ const connectMongoDB = async () => {
     }
 
     await mongoose.connect(process.env.MONGODB_URI, {
-      dbName: 'mern-auth',  // Specify database name here
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
+      dbName: 'mern-auth'
     })
     console.log('Connected to MongoDB')
   } catch (error) {

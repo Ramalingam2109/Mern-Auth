@@ -34,7 +34,15 @@ export const register = async (req, res) => {
     }
     await transporter.sendMail(mailOptions)
 
-    return res.json({ success: true })
+    return res.json({
+      success: true,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        isAccountVerified: user.isAccountVerified
+      }
+    })
   } catch (error) {
     res.json({ success: false, message: error.message })
   }
@@ -66,7 +74,15 @@ export const login = async (req, res) => {
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     })
-    return res.json({ success: true })
+    return res.json({
+      success: true,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        isAccountVerified: user.isAccountVerified
+      }
+    })
   } catch (error) {
     res.json({ success: false, message: error.message })
   }
