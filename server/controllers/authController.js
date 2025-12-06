@@ -231,19 +231,19 @@ export const sendResetOTP = async (req, res) => {
 export const ResetPassword = async (req, res) => {
   const { email, otp, newPassword } = req.body
   if (!email || !otp || !newPassword) {
-    res.json({ success: false, message: 'Invalid Credentials' })
+    return res.json({ success: false, message: 'Invalid Credentials' })
   }
   try {
     const user = await userModel.findOne({ email })
 
     if (!user) {
-      res.json({ success: false, message: 'User not found ' })
+      return res.json({ success: false, message: 'User not found ' })
     }
 
-    if (user.resetOTP == '' || user.resetOTP != otp) {
+    if (user.resetOTP === '' || user.resetOTP !== otp) {
       return res.json({
         success: false,
-        message: 'InValid OTP',
+        message: 'Invalid OTP',
       })
     }
 
