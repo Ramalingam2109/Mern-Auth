@@ -1,12 +1,12 @@
 import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 import ResetPassword from './pages/ResetPassword'
-import Home from './pages/home'
-import Login from './pages/login'
+import Home from './pages/Home'
+import Login from './pages/Login'
 import EmailVerify from './pages/EmailVerify'
 import { ToastContainer } from 'react-toastify'
 import VerifyOtp from './pages/VerifyOtp'
-import AuthForm from './pages/login'
+import AuthForm from './pages/Login'
 
 const App = () => {
   return (
